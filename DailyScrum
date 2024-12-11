@@ -1,0 +1,21 @@
+2024/12/11 Amine
+1. Done since last scrum
+- First scrum 
+2. Plan until next Scrum
+- Set up the app
+- Create the models and the context
+- Add necessary packages for the proejct
+3. Need assistance / figure things out
+- Elements needed for Seed
+
+2024/09/13 Sean
+1. Done since last scrum
+- First scrum
+2. Plan until next Scrum
+- Update proposal based on teacher's feedback, then submit it
+- Set up Trello Board
+- Set up Azure Database and Azure Blob
+- Configure secrets/Azure vault
+3. Need assistance / figure things out
+- How to set up the vault and store secrets properly, hidden from git
+*****
