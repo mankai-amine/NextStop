@@ -52,7 +52,7 @@ using (var scope = app.Services.CreateScope())
             EmailConfirmed = true
         };
         
-        var result = await userManager.CreateAsync(admin, "Password1!"); // Change this password!
+        var result = await userManager.CreateAsync(admin, "Password1!"); 
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(admin, "Admin");
