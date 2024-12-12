@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NextStop.Data;
+using NextStop.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,11 +13,12 @@ builder.Services.AddDbContext<NextStopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"))
 );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
     .AddEntityFrameworkStores<NextStopContext>()
+    //.AddRoles<IdentityRole>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
