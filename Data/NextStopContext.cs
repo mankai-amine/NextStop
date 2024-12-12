@@ -5,7 +5,7 @@ using NextStop.Models;
 
 namespace NextStop.Data
 {
-    public class NextStopContext : IdentityDbContext
+    public class NextStopContext : IdentityDbContext<ApplicationUser>
     {
 
         public DbSet<Bus> Buses { get; set; }
