@@ -1,11 +1,45 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Search page";
+    ViewData["Title"] = "Search & Results page";
 }
-<h1>Search for Trips</h1>
+<h1>Trip search page</h1>
+@if (!Model.SearchWasRequested)
+{
+    <div class="alert alert-info">
+        To search for trips relevant to your needs, please fill in the fields below. Unsure what you want?
+        Simply press the search button if you'd like to see all the trips we have available!
+    </div>
+}
+else
+{
+    @if (Model.Trips.Any())
+    {
+    <div class="row">
+        @foreach (var trip in Model.Trips)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
+                        <p class="card-text">Departure: @trip.DepartureDay</p>
+                        <p class="card-text">Price: $@trip.Price</p>
+                        <p class="card-text">Departure Time: @trip.DepartureTime</p>
+                        <p class="card-text">Arrival Time: @trip.ArrivalTime</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    }
+    else
+    {
+        <p>No trips found matching your criteria.</p>
+    }
+}
+
 <div class="row">
-    <form class="col-12" method="get" asp-page="/Results">
+    <form class="col-12" method="get" asp-page="/Index">
         <div class="d-flex gap-3 align-items-end">
             <div class="form-group">
                 <label asp-for="NewOrigin" class="form-label"></label>
@@ -23,7 +57,7 @@
                 <option value="">Any Day</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-success">Search for Trips</button>
+            <button type="submit" class="btn btn-success">@(!Model.SearchWasRequested ? "Search for " : "Update ")Trips</button>
         </div>
     </form>
 </div>
