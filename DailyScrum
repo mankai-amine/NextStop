@@ -8,7 +8,7 @@
 3. Need assistance / figure things out
 - Elements needed for Seed
 
-2024/09/13 Sean
+2024/12/11 Sean
 1. Done since last scrum
 - First scrum
 2. Plan until next Scrum
@@ -18,4 +18,30 @@
 - Configure secrets/Azure vault
 3. Need assistance / figure things out
 - How to set up the vault and store secrets properly, hidden from git
+*****
+
+2024/12/12 Amine
+1. Done since last scrum
+- Set up the app
+- Create the models and the context
+- Did scaffolding for Identity
+2. Plan until next Scrum
+- Add Name and ProfilePic columns to User table
+- Configure Roles and seed an Admin
+- Customer can edit his profile
+3. Need assistance / figure things out
+- 
+
+2024/12/12 Sean
+1. Done since last scrum
+- Set up Trello
+- Set up Azure DB and Blob Storage
+- Set up Local secrets
+2. Plan until next Scrum
+- Set up search page
+- Set up results page
+- Set up vieworder page
+- Configure secrets/Azure vault
+3. Need assistance / figure things out
+-
 *****
