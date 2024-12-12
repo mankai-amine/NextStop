@@ -7,7 +7,7 @@ public class Order
 
     public Trip Trip { get; set; }
     
-    public IdentityUser Customer { get; set; }
+    public ApplicationUser Customer { get; set; }
     
     public int NumOfPassengers { get; set; }
 
