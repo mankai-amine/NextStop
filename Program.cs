@@ -12,6 +12,14 @@ builder.Services.AddDbContext<NextStopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"))
 );
 
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => 
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+    .AddEntityFrameworkStores<NextStopContext>()
+    .AddDefaultTokenProviders()
+    .AddDefaultUI();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
