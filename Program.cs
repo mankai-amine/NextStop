@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NextStop.Data;
+using NextStop.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,15 +13,52 @@ builder.Services.AddDbContext<NextStopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"))
 );
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => 
 {
     options.SignIn.RequireConfirmedAccount = false;
 })
     .AddEntityFrameworkStores<NextStopContext>()
+    //.AddRoles<IdentityRole>()
     .AddDefaultTokenProviders()
     .AddDefaultUI();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    
+    // Create roles if they don't exist
+    string[] roleNames = { "Admin", "Driver", "Customer" };
+    foreach (var roleName in roleNames)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole(roleName));
+        }
+    }
+
+    // Optionally create an admin user if it doesn't exist
+    var adminEmail = "admin@nextstop.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        var admin = new ApplicationUser
+        {
+            UserName = "admin",
+            Email = adminEmail,
+            Name = "Administrator",
+            EmailConfirmed = true
+        };
+        
+        var result = await userManager.CreateAsync(admin, "Password1!"); 
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(admin, "Admin");
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -35,6 +73,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();

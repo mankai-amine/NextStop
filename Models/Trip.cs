@@ -5,7 +5,7 @@ public class Trip
 {
     public int Id { get; set; }
     
-    public IdentityUser Driver { get; set; }
+    public ApplicationUser Driver { get; set; }
         
     public string Origin { get; set; }
 
