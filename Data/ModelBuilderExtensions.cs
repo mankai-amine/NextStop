@@ -49,12 +49,20 @@ public static class ModelBuilderExtensions
             Model = "Scania Interlink HD",
             Manufacturer = "Scania",
             Capacity = 60
+        },
+        new Bus
+        {
+            Id = 4,
+            Model = "Minibus Express Lite",
+            Manufacturer = "The Tiny Bus Company",
+            Capacity = 3
         });
 
         modelBuilder.Entity<Trip>().HasData(
         new Trip
         {
             Id = 1,
+            BusId = 1,
             Driver = null, 
             Origin = "Montreal",
             Destination = "Ottawa",
@@ -66,6 +74,7 @@ public static class ModelBuilderExtensions
         new Trip
         {
             Id = 2,
+            BusId = 2,
             Driver = null,
             Origin = "Toronto",
             Destination = "Montreal",
@@ -77,6 +86,7 @@ public static class ModelBuilderExtensions
         new Trip
         {
             Id = 3,
+            BusId = 3,
             Driver = null,
             Origin = "Vancouver",
             Destination = "Calgary",
@@ -84,6 +94,18 @@ public static class ModelBuilderExtensions
             DepartureTime = new TimeSpan(9, 45, 0), 
             ArrivalTime = new TimeSpan(16, 0, 0), 
             Price = 150
+        },
+        new Trip
+        {
+            Id = 4,
+            BusId = 4,
+            Driver = null,
+            Origin = "Quebec City",
+            Destination = "Saint John",
+            DepartureDay = DayOfWeek.Saturday,
+            DepartureTime = new TimeSpan(8, 45, 0), 
+            ArrivalTime = new TimeSpan(15, 0, 0),
+            Price = 120
         });
 
         return modelBuilder;

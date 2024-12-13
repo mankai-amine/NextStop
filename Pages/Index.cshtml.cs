@@ -33,14 +33,17 @@ public class IndexModel : PageModel
     [Display(Name = "Day of Trip")]
     public DateTime NewDateOfTravel {get; set; }
 
-    // [BindProperty, Display(Name = "Weekday of Trip")]
+    [Display(Name= "Number of Passengers")]
+    public int NewNumOfPassengers {get; set; }
+
     public DayOfWeek? NewDepartureDay {get; set; }
 
     public IList<Trip> Trips {get; set; } = new List<Trip>();
 
     public async Task<IActionResult> OnGetAsync(string? origin,
                                                 string? destination,
-                                                DateTime? date)
+                                                DateTime? date,
+                                                int? passengers)
     {
         var curUser = await _userManager.GetUserAsync(User);
         if (curUser == null) {
@@ -56,29 +59,61 @@ public class IndexModel : PageModel
             if (!string.IsNullOrEmpty(origin))
             {
                 query = query.Where(t => t.Origin.Contains(origin));
+                NewOrigin = origin;
             }
 
             if (!string.IsNullOrEmpty(destination))
             {
                 query = query.Where(t => t.Destination.Contains(destination));
+                NewDestination = destination;
             }
 
             if (date.HasValue)
             {
+                if (passengers <= 0)
+                    {
+                        ModelState.AddModelError("NewNumOfPassengers", "You must book for at least one passenger");
+                        NewNumOfPassengers = 1;
+                        NewDateOfTravel = (DateTime) date;
+                        return Page();
+                    }
                 try
                 {
                     DateTime today = DateTime.Today;
                     DateTime day = (DateTime)date;
-                    if (today < day)
+                    day = day.Date;
+                    if (today <= day)
                     {
                         NewDepartureDay = day.DayOfWeek;
-                        query = query.Where(t => t.DepartureDay == NewDepartureDay.Value);
-                        // TODO logic for searching Orders
+
+                        // Create a subquery to calculate available seats for each trip
+                        var tripsWithAvailability = from t in query
+                            where t.DepartureDay == NewDepartureDay.Value
+                            select new
+                            {
+                                Trip = t,
+                                AvailableSeats = t.Bus.Capacity - (
+                                    context.Orders
+                                        .Where(o => o.Trip.Id == t.Id && o.DateOfTravel.Date == day.Date)
+                                        .Select(o => o.NumOfPassengers)
+                                        .DefaultIfEmpty()
+                                        .Sum()
+                                    )
+                            };
+
+                        // Apply all filters including the capacity check
+                        query = tripsWithAvailability
+                            .Where(t => t.AvailableSeats >= passengers)
+                            .Select(t => t.Trip);
+                                    
+                        NewDateOfTravel = (DateTime)date;
+                        NewNumOfPassengers = (int)passengers;
                     }
                     else
                     {
                         ModelState.AddModelError("NewDateOfTravel", "Unable to search for past trips, please select a date starting from today.");
                         NewDateOfTravel = DateTime.Now.AddDays(1);
+                        NewNumOfPassengers = (int)passengers;
                         return Page();
                     }
                 }
@@ -88,10 +123,21 @@ public class IndexModel : PageModel
                     // _logger.Log(e);
                 }
             }
+            else
+            {
+                ModelState.AddModelError("NewDateOfTravel", "Please select a travel date.");
+                NewDateOfTravel = DateTime.Now.AddDays(1);
+                return Page();
+            }
 
             Trips = await query.ToListAsync();
         }
-        NewDateOfTravel = DateTime.Now.AddDays(1);
+        else
+        {
+            NewDateOfTravel = DateTime.Now.AddDays(1);
+            NewNumOfPassengers = 1;
+        }
+
         return Page();
     }
 

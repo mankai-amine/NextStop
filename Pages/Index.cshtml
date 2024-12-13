@@ -4,38 +4,12 @@
     ViewData["Title"] = "Search & Results page";
 }
 <h1>Trip search page</h1>
+
 @if (!Model.SearchWasRequested)
 {
     <div class="alert alert-info">
-        To search for trips relevant to your needs, please fill in the fields below. Unsure what you want?
-        You can see all the trips we have available by leaving every search field blank.
+        To search for trips relevant to your needs, please fill in the fields below.
     </div>
-}
-else
-{
-    @if (Model.Trips.Any())
-    {
-    <div class="row">
-        @foreach (var trip in Model.Trips)
-        {
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
-                        <p class="card-text">Departure: @trip.DepartureDay</p>
-                        <p class="card-text">Price: $@trip.Price</p>
-                        <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
-                        <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-    }
-    else
-    {
-        <p>No trips found matching your criteria.</p>
-    }
 }
 
 <div class="row">
@@ -56,7 +30,39 @@ else
                 <input name="date" asp-for="NewDateOfTravel" type="date" class="form-control" value="@(Model.NewDateOfTravel.ToString("yyyy-MM-dd"))" />
                 <span asp-validation-for="NewDateOfTravel"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="NewNumOfPassengers" class="form-label"></label>
+                <input name="passengers" type="number" asp-for="NewNumOfPassengers" class="form-control" />
+                <span asp-validation-for="NewNumOfPassengers"></span>
+            </div>
             <button type="submit" class="btn btn-success">@(!Model.SearchWasRequested ? "Search for " : "Update ")Trips</button>
         </div>
     </form>
 </div>
+
+@if (Model.SearchWasRequested)
+{
+    @if (Model.Trips.Any())
+    {
+    <div class="row">
+        @foreach (var trip in Model.Trips)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
+                        <p class="card-text">Departure: @Model.NewDateOfTravel.ToString("dddd MMMM dd, yyyy")</p>
+                        <p class="card-text">Price: $@trip.Price per passenger</p>
+                        <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
+                        <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    }
+    else
+    {
+        <p>No trips found matching your criteria.</p>
+    }
+}
