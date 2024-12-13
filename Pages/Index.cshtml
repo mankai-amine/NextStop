@@ -1,17 +1,68 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Search & Results page";
+}
+<h1>Trip search page</h1>
+
+@if (!Model.SearchWasRequested)
+{
+    <div class="alert alert-info">
+        To search for trips relevant to your needs, please fill in the fields below.
+    </div>
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row">
+    <form class="col-12" method="get" asp-page="/Index">
+        <div class="d-flex gap-3 align-items-end">
+            <div class="form-group">
+                <label asp-for="NewOrigin" class="form-label"></label>
+                <input name="origin" asp-for="NewOrigin" class="form-control" />
+                <span asp-validation-for="NewOrigin"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewDestination" class="form-label"></label>
+                <input name="destination" asp-for="NewDestination" class="form-control" />
+                <span asp-validation-for="NewDestination"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewDateOfTravel" class="form-label"></label>
+                <input name="date" asp-for="NewDateOfTravel" type="date" class="form-control" value="@(Model.NewDateOfTravel.ToString("yyyy-MM-dd"))" />
+                <span asp-validation-for="NewDateOfTravel"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NewNumOfPassengers" class="form-label"></label>
+                <input name="passengers" type="number" asp-for="NewNumOfPassengers" class="form-control" />
+                <span asp-validation-for="NewNumOfPassengers"></span>
+            </div>
+            <button type="submit" class="btn btn-success">@(!Model.SearchWasRequested ? "Search for " : "Update ")Trips</button>
+        </div>
+    </form>
 </div>
 
-@if (TempData["Confirmation"] != null)
+@if (Model.SearchWasRequested)
 {
-    <div class="alert alert-success">
-        @TempData["Confirmation"]
+    @if (Model.Trips.Any())
+    {
+    <div class="row">
+        @foreach (var trip in Model.Trips)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
+                        <p class="card-text">Departure: @Model.NewDateOfTravel.ToString("dddd MMMM dd, yyyy")</p>
+                        <p class="card-text">Price: $@trip.Price per passenger</p>
+                        <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
+                        <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
+    }
+    else
+    {
+        <p>No trips found matching your criteria.</p>
+    }
 }

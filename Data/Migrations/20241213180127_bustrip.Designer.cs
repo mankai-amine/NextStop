@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NextStop.Data;
 
@@ -11,9 +12,11 @@ using NextStop.Data;
 namespace NextStop.Data.Migrations
 {
     [DbContext(typeof(NextStopContext))]
-    partial class NextStopContextModelSnapshot : ModelSnapshot
+    [Migration("20241213180127_bustrip")]
+    partial class bustrip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -390,17 +393,6 @@ namespace NextStop.Data.Migrations
                             Destination = "Calgary",
                             Origin = "Vancouver",
                             Price = 150m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            ArrivalTime = new TimeSpan(0, 15, 0, 0, 0),
-                            BusId = 4,
-                            DepartureDay = 6,
-                            DepartureTime = new TimeSpan(0, 8, 45, 0, 0),
-                            Destination = "Saint John",
-                            Origin = "Quebec City",
-                            Price = 120m
                         });
                 });
 
