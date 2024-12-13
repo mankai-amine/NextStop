@@ -8,7 +8,7 @@
 {
     <div class="alert alert-info">
         To search for trips relevant to your needs, please fill in the fields below. Unsure what you want?
-        Simply press the search button if you'd like to see all the trips we have available!
+        You can see all the trips we have available by leaving every search field blank.
     </div>
 }
 else
@@ -24,8 +24,8 @@ else
                         <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
                         <p class="card-text">Departure: @trip.DepartureDay</p>
                         <p class="card-text">Price: $@trip.Price</p>
-                        <p class="card-text">Departure Time: @trip.DepartureTime</p>
-                        <p class="card-text">Arrival Time: @trip.ArrivalTime</p>
+                        <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
+                        <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
                     </div>
                 </div>
             </div>
@@ -52,10 +52,9 @@ else
                 <span asp-validation-for="NewDestination"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NewDepartureDay" class="form-label"></label>
-                <select name="day" asp-for="NewDepartureDay" class="form-select" asp-items="Html.GetEnumSelectList<DayOfWeek>()">
-                <option value="">Any Day</option>
-                </select>
+                <label asp-for="NewDateOfTravel" class="form-label"></label>
+                <input name="date" asp-for="NewDateOfTravel" type="date" class="form-control" value="@(Model.NewDateOfTravel.ToString("yyyy-MM-dd"))" />
+                <span asp-validation-for="NewDateOfTravel"></span>
             </div>
             <button type="submit" class="btn btn-success">@(!Model.SearchWasRequested ? "Search for " : "Update ")Trips</button>
         </div>

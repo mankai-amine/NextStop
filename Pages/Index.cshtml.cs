@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,10 @@ namespace NextStop.Pages;
 public class IndexModel : PageModel
 {
     private NextStopContext context;
-    private readonly UserManager<IdentityUser> _userManager;
+    private readonly UserManager<ApplicationUser> _userManager;
     private readonly ILogger<IndexModel> _logger;
 
-    public IndexModel(NextStopContext context, UserManager<IdentityUser> userManager, ILogger<IndexModel> logger)
+    public IndexModel(NextStopContext context, UserManager<ApplicationUser> userManager, ILogger<IndexModel> logger)
     {
         this.context = context;
         _userManager = userManager;
@@ -23,20 +24,23 @@ public class IndexModel : PageModel
 
     public bool SearchWasRequested {get; private set; }
 
-    [BindProperty, Display(Name = "Origin")]
+    [Display(Name = "Origin")]
     public string NewOrigin {get; set; }
 
-    [BindProperty, Display(Name = "Destination")]
+    [Display(Name = "Destination")]
     public string NewDestination {get; set; }
 
-    [BindProperty, Display(Name = "Weekday of Trip")]
+    [Display(Name = "Day of Trip")]
+    public DateTime NewDateOfTravel {get; set; }
+
+    // [BindProperty, Display(Name = "Weekday of Trip")]
     public DayOfWeek? NewDepartureDay {get; set; }
 
     public IList<Trip> Trips {get; set; } = new List<Trip>();
 
     public async Task<IActionResult> OnGetAsync(string? origin,
                                                 string? destination,
-                                                DayOfWeek? day)
+                                                DateTime? date)
     {
         var curUser = await _userManager.GetUserAsync(User);
         if (curUser == null) {
@@ -59,14 +63,35 @@ public class IndexModel : PageModel
                 query = query.Where(t => t.Destination.Contains(destination));
             }
 
-            if (day.HasValue)
+            if (date.HasValue)
             {
-                query = query.Where(t => t.DepartureDay == day.Value);
+                try
+                {
+                    DateTime today = DateTime.Today;
+                    DateTime day = (DateTime)date;
+                    if (today < day)
+                    {
+                        NewDepartureDay = day.DayOfWeek;
+                        query = query.Where(t => t.DepartureDay == NewDepartureDay.Value);
+                        // TODO logic for searching Orders
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("NewDateOfTravel", "Unable to search for past trips, please select a date starting from today.");
+                        NewDateOfTravel = DateTime.Now.AddDays(1);
+                        return Page();
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    // _logger.Log(e);
+                }
             }
 
             Trips = await query.ToListAsync();
         }
-
+        NewDateOfTravel = DateTime.Now.AddDays(1);
         return Page();
     }
 
