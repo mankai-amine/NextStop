@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using NextStop.Models;
+using NextStop.Services;
 
 namespace NextStop.Areas.Identity.Pages.Account.Manage
 {
@@ -17,13 +18,16 @@ namespace NextStop.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly AzureBlobService _azureBlobService;
 
         public IndexModel(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            AzureBlobService azureBlobService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _azureBlobService = azureBlobService;
         }
 
         /// <summary>
@@ -59,6 +63,9 @@ namespace NextStop.Areas.Identity.Pages.Account.Manage
             
             [Display(Name = "Name")]
             public string Name { get; set; }
+
+            [Display(Name = "Profile Picture")]
+            public IFormFile ProfilePic { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
@@ -99,13 +106,29 @@ namespace NextStop.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            // Handle name update
             if (Input.Name != user.Name)
             {
                 user.Name = Input.Name; 
+
                 var updateResult = await _userManager.UpdateAsync(user); 
                 if (!updateResult.Succeeded)
                 {
                     StatusMessage = "Unexpected error when trying to set name.";
+                    return RedirectToPage();
+                }
+            }
+
+            // Handle profile picture upload
+            if (Input.ProfilePic != null)
+            {
+                var profilePicUrl = await _azureBlobService.UploadProfilePictureAsync(Input.ProfilePic);
+                user.ProfilePic = profilePicUrl; 
+
+                var updateResult = await _userManager.UpdateAsync(user); 
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when updating profile picture.";
                     return RedirectToPage();
                 }
             }
