@@ -45,3 +45,27 @@
 3. Need assistance / figure things out
 -
 *****
+
+2024/12/13 Amine
+1. Done since last scrum
+- Add Name and ProfilePic columns to User table
+- Configure Roles and seed an Admin
+- Customer can edit his profile
+2. Plan until next Scrum
+- Finish EditProfile page
+- Work on purchase page
+3. Need assistance / figure things out
+- Figure out Stripe
+
+2024/12/13 Sean
+1. Done since last scrum
+- Set up search page with results integrated
+- Helped set up roles for custom user class
+2. Plan until next Scrum
+- Finish some more query logic for search
+- Set up view trip page
+- Configure Azure Blob with Database
+- Configure secrets/Azure vault
+3. Need assistance / figure things out
+- 
+*****
