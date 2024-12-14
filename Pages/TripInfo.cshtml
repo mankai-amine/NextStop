@@ -13,10 +13,8 @@
             <p class="card-text">Price: $@Model.Trip.Price per passenger</p>
             <p class="card-text">Departure Time: @Model.Trip.DepartureTime.ToString(@"hh\:mm")</p>
             <p class="card-text">Arrival Time: @Model.Trip.ArrivalTime.ToString(@"hh\:mm")</p>
-            @if (@Model.NumberOfPassengers > 1)
-            {
-                <p class="card-text">Total: $@Model.Total</p>
-            }
+            <p class="card-text">Number of Passengers: @Model.NumberOfPassengers</p>
+            <p class="card-text">Total: $@Model.Total</p>
         </div>
     </div>
     @if (@Model.OrderButtonActive)
