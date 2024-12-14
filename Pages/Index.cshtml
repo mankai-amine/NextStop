@@ -55,6 +55,13 @@
                         <p class="card-text">Price: $@trip.Price per passenger</p>
                         <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
                         <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
+
+                        <a asp-page="/TripInfo" asp-route-tripId="@trip.Id"
+                        asp-route-date="@Model.NewDateOfTravel.ToString("yyyy-MM-dd")"
+                        asp-route-numPassengers="@Model.NewNumOfPassengers"
+                        class="btn btn-primary">
+                        View Trip Details
+                        </a>
                     </div>
                 </div>
             </div>
