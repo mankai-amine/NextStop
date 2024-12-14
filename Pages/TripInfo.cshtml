@@ -1,4 +1,4 @@
-﻿@page "{id?}"
+﻿@page
 @model NextStop.Pages.TripInfoModel
 @{
     ViewData["Title"] = "Trip View";
@@ -9,8 +9,7 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">@Model.Trip.Origin to @Model.Trip.Destination</h5>
-            @*find a solution for seeing travel date*@
-            @* <p class="card-text">Departure: @Model.NewDateOfTravel.ToString("dddd MMMM dd, yyyy")</p> *@
+            <p class="card-text">Departure: @Model.DateOfTravel.ToString("dddd MMMM dd, yyyy")</p>
             <p class="card-text">Price: $@Model.Trip.Price per passenger</p>
             <p class="card-text">Departure Time: @Model.Trip.DepartureTime.ToString(@"hh\:mm")</p>
             <p class="card-text">Arrival Time: @Model.Trip.ArrivalTime.ToString(@"hh\:mm")</p>

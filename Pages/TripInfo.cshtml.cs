@@ -21,22 +21,43 @@ namespace NextStop.Pages
             _logger = logger;
         }
 
-        [BindProperty(SupportsGet = true)]
-        public int Id { get; set; }
-
         public Trip Trip;
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public DateTime DateOfTravel { get; set; }
+        public int NumberOfPassengers { get; set; }
+        public bool OrderButtonActive { get; set; } = false;
+
+        public async Task<IActionResult> OnGetAsync(int? tripId, DateTime? date, int? numPassengers)
         {
             var curUser = await _userManager.GetUserAsync(User);
             if (curUser == null) {
                 return RedirectToPage("/Account/Login", new {area = "Identity" });
             }
-            if (id == null) {
+            if (!tripId.HasValue || !date.HasValue || !numPassengers.HasValue) {
                 RedirectToPage("/Index");
+                // DOESNT WORK PROPERLY
                 // TODO Error message
             }
-            Trip = await context.Trips.FirstOrDefaultAsync(a => a.Id == Id);
-            // TODO set variable for allowing order button activation
+            Trip = await context.Trips
+                .Include(t => t.Bus)
+                .FirstOrDefaultAsync(t => t.Id == tripId);
+
+            DateTime day = (DateTime) date;
+            day = day.Date;
+            DateOfTravel = day;
+
+            int capacity = Trip.Bus.Capacity;
+
+            int numCurrentPassengers = context.Orders
+                .Where(o => o.Trip.Id == tripId && o.DateOfTravel.Date == day)
+                .Select(o => o.NumOfPassengers)
+                .DefaultIfEmpty()
+                .Sum();
+
+            if ((capacity - numCurrentPassengers) > numPassengers)
+            {
+                OrderButtonActive = true;
+            }
+            
             return Page();
         }
     }
