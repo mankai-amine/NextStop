@@ -19,7 +19,12 @@
     </div>
     @if (@Model.OrderButtonActive)
     {
-        <a class="btn btn-primary" asp-page="/Index">You can order this trip!</a>
+        <a class="btn btn-primary" asp-page="/OrderTrip" asp-route-tripId="@Model.Trip.Id"
+            asp-route-date="@Model.DateOfTravel.ToString("yyyy-MM-dd")"
+            asp-route-numPassengers="@Model.NumberOfPassengers"
+            class="btn btn-primary">
+            Proceed to checkout        
+        </a>
     }
     else
     {
