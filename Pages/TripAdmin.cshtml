@@ -1,0 +1,42 @@
+﻿@page
+@model NextStop.Pages.TripAdminModel
+@{
+    ViewData["Title"] = "Admin Trip Overview";
+}
+
+<a class="btn btn-primary" asp-page="/TripAdd">Add a new Trip</a>
+@if (TempData["Confirmation"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Confirmation"]
+    </div>
+}
+
+@if (Model.Trips.Any())
+{
+    <div class="row">
+        @foreach (var trip in Model.Trips)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
+                        <p class="card-text">Departure Day: @trip.DepartureDay</p>
+                        <p class="card-text">Price: $@trip.Price per passenger</p>
+                        <p class="card-text">Departure Time: @trip.DepartureTime.ToString(@"hh\:mm")</p>
+                        <p class="card-text">Arrival Time: @trip.ArrivalTime.ToString(@"hh\:mm")</p>
+
+                        <a asp-page="/TripEdit" asp-route-tripId="@trip.Id"
+                        class="btn btn-primary">
+                        Edit Trip Information
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No trips found.</p>
+}
