@@ -3,6 +3,9 @@ using System.IO;
 using System.Threading.Tasks;
 using Stripe;
 using Stripe.Checkout;
+using Microsoft.AspNetCore.Identity;
+using NextStop.Models; 
+
 namespace NextStop.Services;
 
 
@@ -11,12 +14,14 @@ public class StripeService
     private readonly string _publishableKey;
     private readonly string _secretKey;
     private readonly IConfiguration _configuration;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public StripeService(IConfiguration configuration)
+    public StripeService(IConfiguration configuration, UserManager<ApplicationUser> userManager)
     {
         _configuration = configuration;
         _secretKey = _configuration["Stripe:SecretKey"];
         _publishableKey = _configuration["Stripe:PublishableKey"];
+        _userManager = userManager;
 
         if (string.IsNullOrWhiteSpace(_publishableKey))
         {
@@ -37,7 +42,7 @@ public class StripeService
     }
 
     // Create a Stripe Checkout Session
-    public async Task<string> CreateStripeCheckoutSessionAsync(decimal amount, int tripId)
+    public async Task<string> CreateStripeCheckoutSessionAsync(decimal amount, int tripId, DateTime dateOfTravel, int numOfPassengers, string userId)
     {
         try
         {
@@ -50,19 +55,26 @@ public class StripeService
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Currency = "cad", // Adjust currency if needed
+                            Currency = "cad", 
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = $"Trip #{tripId}"
                             },
-                            UnitAmount = (long)(amount * 100) // Convert to cents
+                            UnitAmount = (long)(amount * 100) 
                         },
                         Quantity = 1
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = "https://localhost:5135/Index",
-                CancelUrl = "https://localhost:5135/Index",
+                SuccessUrl = "http://localhost:5135/",
+                CancelUrl = "http://localhost:5135/",
+                Metadata = new Dictionary<string, string>
+                {
+                    { "TripId", tripId.ToString() },
+                    { "NumOfPassengers", numOfPassengers.ToString() },
+                    { "DateOfTravel", dateOfTravel.ToString("yyyy-MM-dd") },
+                    { "UserId", userId }
+                }
             };
 
             var service = new SessionService();

@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton<AzureBlobService>();
-builder.Services.AddSingleton<StripeService>();
+builder.Services.AddTransient<StripeService>();
+builder.Services.AddControllers();
 
 builder.Services.AddDbContext<NextStopContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("AzureConnection"))
@@ -80,5 +81,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+app.MapControllers();
 
 app.Run();

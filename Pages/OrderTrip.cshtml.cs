@@ -30,7 +30,6 @@ namespace NextStop.Pages
         [BindProperty]
         public int NumberOfPassengers { get; set; }
         public decimal Total { get; set; }
-        public string SessionId { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? tripId, DateTime? date, int? numPassengers)
         {
@@ -56,17 +55,6 @@ namespace NextStop.Pages
 
                 NumberOfPassengers = (int)numPassengers;
                 Total = Trip.Price * NumberOfPassengers;
-                
-                // Create Stripe Checkout Session
-                var sessionId = await _stripeService.CreateStripeCheckoutSessionAsync(Total, Trip.Id);
-                if (sessionId == null)
-                {
-                    TempData["ErrorMessage"] = "Failed to create Stripe checkout session.";
-                    return RedirectToPage("Error");
-                }
-
-                // Store session ID to pass to the form
-                SessionId = sessionId;
 
                 return Page();
             }
@@ -77,34 +65,42 @@ namespace NextStop.Pages
         // Handle Stripe payment session creation (on POST)
         public async Task<IActionResult> OnPostAsync(decimal amount, int tripId)
         {
-            // Create a Stripe checkout session using the passed parameters
-            var sessionUrl = await _stripeService.CreateStripeCheckoutSessionAsync(amount, tripId);
+            // Get the current user
+            var curUser = await _userManager.GetUserAsync(User);
 
-            /*if (string.IsNullOrEmpty(sessionUrl))
+            if (curUser == null)
+            {
+                TempData["ErrorMessage"] = "User not authenticated.";
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            // Validate the trip ID
+            var trip = await _context.Trips.FindAsync(tripId);
+            if (trip == null)
+            {
+                TempData["ErrorMessage"] = "Trip not found.";
+                return RedirectToPage("Error");
+            }
+
+            // Create a Stripe Checkout session
+            var sessionUrl = await _stripeService.CreateStripeCheckoutSessionAsync(
+                amount,
+                tripId,
+                DateOfTravel,
+                NumberOfPassengers, 
+                curUser.Id
+            );
+
+            if (string.IsNullOrEmpty(sessionUrl))
             {
                 TempData["ErrorMessage"] = "Failed to create Stripe checkout session.";
                 return RedirectToPage("Error");
-            }*/
+            }
 
-            var curUser = await _userManager.GetUserAsync(User);
-            var trip = await _context.Trips.FindAsync(tripId);
-
-            // Create the order record in the database
-            var order = new Order
-            {
-                Trip = trip,
-                Customer = curUser,
-                NumOfPassengers = NumberOfPassengers,
-                DateOfTravel = DateOfTravel,
-                BookingTime = DateTime.UtcNow.AddMilliseconds(-DateTime.UtcNow.Millisecond)
-            };
-
-            _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-
-            // Redirect to Stripe checkout page
+            // Redirect the user to the Stripe Checkout page
             return Redirect(sessionUrl);
         }
+
 
     }
 }
