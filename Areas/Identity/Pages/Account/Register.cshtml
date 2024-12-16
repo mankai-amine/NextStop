@@ -1,5 +1,10 @@
 ﻿@page
 @model RegisterModel
+@using Microsoft.AspNetCore.Identity
+@using NextStop.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 @{
     ViewData["Title"] = "Register";
 }
@@ -9,7 +14,17 @@
 <div class="row">
     <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
+            @if (SignInManager.IsSignedIn(User))
+            {
+                @if (User.IsInRole("Admin") && Model.AvailableRoles != null)
+                {
+                <h2>Create a new driver.</h2>
+                }
+            }
+            else
+            {
+                <h2>Create a new account.</h2>
+            }
             <hr />
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
@@ -32,6 +47,19 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+            @* @if (SignInManager.IsSignedIn(User))
+            {
+                @if (User.IsInRole("Admin") && Model.AvailableRoles != null)
+                {
+                <div class="form-floating mb-3">
+                    <select asp-for="Input.Role" asp-items="Model.AvailableRoles" class="form-select">
+                        <option value="">-- Select Role --</option>
+                    </select>
+                    <label asp-for="Input.Role">Role</label>
+                    <span asp-validation-for="Input.Role" class="text-danger"></span>
+                </div>
+                }
+            } *@
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
