@@ -1,0 +1,49 @@
+﻿@page
+@model NextStop.Pages.TripEditModel
+@{
+    ViewData["Title"] = "Admin Trip Edit View";
+}
+
+<div class="row">
+    <form class="col-9" method="post">
+        <div class="form-group mb-3">
+            <label asp-for="NewBusId" class="form-label"></label>
+            <select asp-for="NewBusId" asp-items="Model.BusOptions" class="form-control">
+                <option value="">Select a Bus</option>
+            </select>
+            <span asp-validation-for="NewBusId"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewOrigin" class="form-label"></label>
+            <input asp-for="NewOrigin" class="form-control" />
+            <span asp-validation-for="NewOrigin"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewDestination" class="form-label"></label>
+            <input asp-for="NewDestination" class="form-control" />
+            <span asp-validation-for="NewDestination"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewDepartureDay" class="form-label"></label>
+        <select asp-for="NewDepartureDay" asp-items="Html.GetEnumSelectList<DayOfWeek>()" class="form-control" >
+        </select>
+        <span asp-validation-for="NewDepartureDay"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewDepartureTime" class="form-label"></label>
+            <input type="time" asp-for="NewDepartureTime" class="form-control" />
+            <span asp-validation-for="NewDepartureTime"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewArrivalTime" class="form-label"></label>
+            <input type="time" asp-for="NewArrivalTime" class="form-control" />
+            <span asp-validation-for="NewArrivalTime"></span>
+        </div>
+        <div class="form-group mb-3">
+            <label asp-for="NewPrice" class="form-label"></label>
+            <input type="number" step=".01" asp-for="NewPrice" class="form-control" />
+            <span asp-validation-for="NewPrice"></span>
+        </div>
+        <button type="submit" class="btn btn-success">Update Trip information</button>
+    </form>
+</div>
