@@ -51,6 +51,7 @@ public class StripeWebhookController : ControllerBase
                 // Extract metadata
                 var tripId = int.Parse(session.Metadata["TripId"]);
                 var numOfPassengers = int.Parse(session.Metadata["NumOfPassengers"]);
+                var numOfDiscounts = int.Parse(session.Metadata["NumOfDiscounts"]);
                 var dateOfTravel = DateTime.Parse(session.Metadata["DateOfTravel"]);
                 var userId = session.Metadata["UserId"];
 
@@ -72,6 +73,7 @@ public class StripeWebhookController : ControllerBase
                     Trip = trip,
                     Customer = user,
                     NumOfPassengers = numOfPassengers,
+                    NumOfDiscounts = numOfDiscounts,
                     DateOfTravel = dateOfTravel,
                     BookingTime = DateTime.UtcNow.AddMilliseconds(-DateTime.UtcNow.Millisecond)
                 };

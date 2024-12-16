@@ -42,7 +42,7 @@ public class StripeService
     }
 
     // Create a Stripe Checkout Session
-    public async Task<string> CreateStripeCheckoutSessionAsync(decimal amount, int tripId, DateTime dateOfTravel, int numOfPassengers, string userId)
+    public async Task<string> CreateStripeCheckoutSessionAsync(decimal amount, int tripId, DateTime dateOfTravel, int numOfPassengers, int numOfDiscounts, string userId)
     {
         try
         {
@@ -72,6 +72,7 @@ public class StripeService
                 {
                     { "TripId", tripId.ToString() },
                     { "NumOfPassengers", numOfPassengers.ToString() },
+                    { "NumOfDiscounts", numOfDiscounts.ToString() },
                     { "DateOfTravel", dateOfTravel.ToString("yyyy-MM-dd") },
                     { "UserId", userId }
                 }

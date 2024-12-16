@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using NextStop.Data;
 using NextStop.Models;
+using NextStop.Services;
+using Stripe;
+using Stripe.Checkout;
 
 namespace NextStop.Pages
 {
@@ -13,19 +16,24 @@ namespace NextStop.Pages
 
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<TripInfoModel> _logger;
+        private readonly StripeService _stripeService;
 
         private readonly decimal Discount = 0.8m;
 
-        public TripInfoModel(NextStopContext context, UserManager<ApplicationUser> userManager, ILogger<TripInfoModel> logger)
+        public TripInfoModel(NextStopContext context, UserManager<ApplicationUser> userManager, StripeService stripeService, ILogger<TripInfoModel> logger)
         {
             this.context = context;
             _userManager = userManager;
+            _stripeService = stripeService;
             _logger = logger;
         }
 
         public Trip Trip;
+        [BindProperty]
         public DateTime DateOfTravel { get; set; }
+        [BindProperty]
         public int NumberOfPassengers { get; set; }
+        [BindProperty]
         public int NumberOfDiscounts { get; set; }
         public decimal Total { get; set; }
         public bool OrderButtonActive { get; set; } = false;
@@ -83,6 +91,49 @@ namespace NextStop.Pages
             TempData["ErrorMessage"] = "An error occurred when loading the page";
             _logger.LogError("TripInfo page, 1 or more parameters was missing a value");
             return RedirectToPage("/Index");
+        }
+
+
+
+
+        // Handle Stripe payment session creation (on POST)
+        public async Task<IActionResult> OnPostAsync(decimal amount, int tripId)
+        {
+            // Get the current user
+            var curUser = await _userManager.GetUserAsync(User);
+
+            if (curUser == null)
+            {
+                TempData["ErrorMessage"] = "User not authenticated.";
+                return RedirectToPage("/Account/Login", new { area = "Identity" });
+            }
+
+            // Validate the trip ID
+            var trip = await context.Trips.FindAsync(tripId);
+            if (trip == null)
+            {
+                TempData["ErrorMessage"] = "Trip not found.";
+                return RedirectToPage("Error");
+            }
+
+            // Create a Stripe Checkout session
+            var sessionUrl = await _stripeService.CreateStripeCheckoutSessionAsync(
+                amount,
+                tripId,
+                DateOfTravel,
+                NumberOfPassengers, 
+                NumberOfDiscounts,
+                curUser.Id
+            );
+
+            if (string.IsNullOrEmpty(sessionUrl))
+            {
+                TempData["ErrorMessage"] = "Failed to create Stripe checkout session.";
+                return RedirectToPage("Error");
+            }
+
+            // Redirect the user to the Stripe Checkout page
+            return Redirect(sessionUrl);
         }
     }
 }

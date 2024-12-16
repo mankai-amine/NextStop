@@ -3,6 +3,20 @@
 @{
     ViewData["Title"] = "Trip View";
 }
+@inject NextStop.Services.StripeService StripeService
+@{
+    var publishableKey = StripeService.GetPublishableKey();
+}
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    if ('@publishableKey') {
+        const stripe = Stripe('@publishableKey');
+    } else {
+        console.error('Stripe Publishable Key is not configured');
+    }
+</script>
+
+
 
 <h1>Trip Details</h1>
 <div class="col-md-6 mb-3">
@@ -20,12 +34,14 @@
     </div>
     @if (@Model.OrderButtonActive)
     {
-        <a class="btn btn-primary" asp-page="/OrderTrip" asp-route-tripId="@Model.Trip.Id"
-            asp-route-date="@Model.DateOfTravel.ToString("yyyy-MM-dd")"
-            asp-route-numPassengers="@Model.NumberOfPassengers"
-            class="btn btn-primary">
-            Proceed to checkout        
-        </a>
+        <form method="post">
+            <input type="hidden" name="amount" value="@Model.Total" />
+            <input type="hidden" name="tripId" value="@Model.Trip.Id" />
+            <input type="hidden" name="DateOfTravel" value="@Model.DateOfTravel" />
+            <input type="hidden" name="NumberOfPassengers" value="@Model.NumberOfPassengers" />
+            <input type="hidden" name="NumberOfDiscounts" value="@Model.NumberOfDiscounts" />
+            <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+        </form>
     }
     else
     {
