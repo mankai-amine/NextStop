@@ -1,10 +1,21 @@
 ﻿@page
 @model NextStop.Pages.OrderTripModel
+@inject NextStop.Services.StripeService StripeService
 @{
+    var publishableKey = StripeService.GetPublishableKey();
 }
 <script src="https://js.stripe.com/v3/"></script>
-
+<script>
+    if ('@publishableKey') {
+        const stripe = Stripe('@publishableKey');
+    } else {
+        console.error('Stripe Publishable Key is not configured');
+    }
+</script>
 <form method="post">
     <input type="hidden" name="amount" value="@Model.Total" />
+    <input type="hidden" name="tripId" value="@Model.Trip.Id" />
+    <input type="hidden" name="DateOfTravel" value="@Model.DateOfTravel" />
+    <input type="hidden" name="NumberOfPassengers" value="@Model.NumberOfPassengers" />
     <button type="submit" class="btn btn-primary">Proceed to Payment</button>
 </form>

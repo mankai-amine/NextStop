@@ -13,19 +13,21 @@ namespace NextStop.Pages
 {
     public class OrderTripModel : PageModel
     {
-        private readonly NextStopContext context;
+        private readonly NextStopContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly StripeService _stripeService;
 
         public OrderTripModel(NextStopContext context, UserManager<ApplicationUser> userManager, StripeService stripeService)
         {
-            context = context;
+            _context = context;
             _userManager = userManager;
             _stripeService = stripeService;
         }
 
         public Trip Trip;
+        [BindProperty]
         public DateTime DateOfTravel { get; set; }
+        [BindProperty]
         public int NumberOfPassengers { get; set; }
         public decimal Total { get; set; }
         public string SessionId { get; set; }
@@ -38,7 +40,7 @@ namespace NextStop.Pages
             }
             if (tripId.HasValue && date.HasValue && numPassengers.HasValue) {
                 
-                Trip = await context.Trips
+                Trip = await _context.Trips
                     .Include(t => t.Bus)
                     .FirstOrDefaultAsync(t => t.Id == tripId);
                 
@@ -76,16 +78,32 @@ namespace NextStop.Pages
         public async Task<IActionResult> OnPostAsync(decimal amount, int tripId)
         {
             // Create a Stripe checkout session using the passed parameters
-            var sessionId = await _stripeService.CreateStripeCheckoutSessionAsync(amount, tripId);
+            var sessionUrl = await _stripeService.CreateStripeCheckoutSessionAsync(amount, tripId);
 
-            if (sessionId == null)
+            /*if (string.IsNullOrEmpty(sessionUrl))
             {
                 TempData["ErrorMessage"] = "Failed to create Stripe checkout session.";
                 return RedirectToPage("Error");
-            }
+            }*/
+
+            var curUser = await _userManager.GetUserAsync(User);
+            var trip = await _context.Trips.FindAsync(tripId);
+
+            // Create the order record in the database
+            var order = new Order
+            {
+                Trip = trip,
+                Customer = curUser,
+                NumOfPassengers = NumberOfPassengers,
+                DateOfTravel = DateOfTravel,
+                BookingTime = DateTime.UtcNow.AddMilliseconds(-DateTime.UtcNow.Millisecond)
+            };
+
+            _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
 
             // Redirect to Stripe checkout page
-            return Redirect($"https://checkout.stripe.com/pay/{sessionId}");
+            return Redirect(sessionUrl);
         }
 
     }

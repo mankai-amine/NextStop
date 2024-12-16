@@ -1,20 +1,33 @@
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
+using Stripe;
+using Stripe.Checkout;
 namespace NextStop.Services;
 
 
 public class StripeService
 {
     private readonly string _publishableKey;
+    private readonly string _secretKey;
+    private readonly IConfiguration _configuration;
 
     public StripeService(IConfiguration configuration)
     {
+        _configuration = configuration;
+        _secretKey = _configuration["Stripe:SecretKey"];
+        _publishableKey = _configuration["Stripe:PublishableKey"];
+
+        if (string.IsNullOrWhiteSpace(_publishableKey))
+        {
+            throw new InvalidOperationException("Stripe Publishable Key is not configured.");
+        }
+        if (string.IsNullOrEmpty(_secretKey))
+        {
+            throw new InvalidOperationException("Stripe Secret Key is not configured.");
+        }
         // Set Stripe's secret key globally (for server-side API calls)
-        StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
-        
-        // Store publishable key (for client-side use, e.g., in scripts)
-        _publishableKey = configuration["Stripe:PublishableKey"];
+        StripeConfiguration.ApiKey = _secretKey;
     }
 
     // Expose the publishable key if needed
@@ -37,7 +50,7 @@ public class StripeService
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Currency = "usd", // Adjust currency if needed
+                            Currency = "cad", // Adjust currency if needed
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
                                 Name = $"Trip #{tripId}"
@@ -48,17 +61,16 @@ public class StripeService
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = "https://yourwebsite.com/success",
-                CancelUrl = "https://yourwebsite.com/cancel",
+                SuccessUrl = "https://localhost:5135/Index",
+                CancelUrl = "https://localhost:5135/Index",
             };
 
             var service = new SessionService();
             var session = await service.CreateAsync(options);
-            return session.Id;
+            return session.Url;
         }
         catch (Exception ex)
         {
-            // Log error for debugging
             Console.WriteLine($"Stripe Error: {ex.Message}");
             return null;
         }
