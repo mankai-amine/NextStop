@@ -112,8 +112,8 @@ namespace NextStop.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Display(Name = "Role")]
-            public string Role { get; set; }
+            // [Display(Name = "Role")]
+            // public string Role { get; set; }
         }
 
 
@@ -155,10 +155,9 @@ namespace NextStop.Areas.Identity.Pages.Account
                 {
                     var currentUser = await _userManager.GetUserAsync(User);
                     if (currentUser != null && 
-                        await _userManager.IsInRoleAsync(currentUser, "Admin") && 
-                        !string.IsNullOrEmpty(Input.Role))
+                        await _userManager.IsInRoleAsync(currentUser, "Admin"))
                     {
-                        await _userManager.AddToRoleAsync(user, Input.Role);
+                        await _userManager.AddToRoleAsync(user, "Driver");
                     }
                     else
                     {
@@ -184,10 +183,10 @@ namespace NextStop.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        if (await _userManager.IsInRoleAsync(currentUser, "Admin"))
+                        if (currentUser != null && await _userManager.IsInRoleAsync(currentUser, "Admin"))
                         {
                             TempData["Confirmation"] = "New account created.";
-                            return LocalRedirect(returnUrl);
+                            return RedirectToPage("/TripAdmin");
                         }
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);

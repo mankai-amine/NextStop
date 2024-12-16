@@ -33,10 +33,10 @@ public class IndexModel : PageModel
     [Display(Name = "Day of Trip")]
     public DateTime NewDateOfTravel {get; set; }
 
-    [Display(Name= "Number of Passengers")]
+    [Display(Name= "Total Passengers")]
     public int NewNumOfPassengers {get; set; }
 
-    [Display(Name= "Discounted passengers")]
+    [Display(Name= "Children and Seniors")]
     public int NewNumOfDiscounts { get; set; }
 
     public DayOfWeek? NewDepartureDay {get; set; }
@@ -50,9 +50,14 @@ public class IndexModel : PageModel
                                                 int? discounts)
     {
         var curUser = await _userManager.GetUserAsync(User);
-        if (curUser == null) {
-                return RedirectToPage("/Account/Login", new {area = "Identity" });
-            }
+        if (curUser == null) 
+        {
+            return RedirectToPage("/Account/Login", new {area = "Identity" });
+        }
+        else if (await _userManager.IsInRoleAsync(curUser, "Admin"))
+        {
+            return RedirectToPage("/TripAdmin");
+        }
 
         SearchWasRequested = Request.QueryString.Value?.Length > 1;
 
