@@ -14,6 +14,12 @@
             <span asp-validation-for="NewBusId"></span>
         </div>
         <div class="form-group mb-3">
+            <label asp-for="NewDriverId" class="form-label"></label>
+            <select asp-for="NewDriverId" asp-items="Model.DriverOptions" class="form-control">
+            </select>
+            <span asp-validation-for="NewDriverId"></span>
+        </div>
+        <div class="form-group mb-3">
             <label asp-for="NewOrigin" class="form-label"></label>
             <input asp-for="NewOrigin" class="form-control" />
             <span asp-validation-for="NewOrigin"></span>

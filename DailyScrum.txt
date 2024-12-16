@@ -89,3 +89,21 @@
 3. Need assistance / figure things out
 - 
 *****
+
+2024/12/16 Amine
+1. Done since last scrum
+- Work on payments with STRIPE API
+2. Plan until next Scrum
+- Finish up the payment feature
+3. Need assistance / figure things out
+- 
+
+2024/12/16 Sean
+1. Done since last scrum
+- Admin trip creation and edit
+2. Plan until next Scrum
+- Set up some drivers for our buses
+- Number of discounts
+3. Need assistance / figure things out
+- 
+*****
