@@ -14,6 +14,8 @@ namespace NextStop.Pages
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<TripInfoModel> _logger;
 
+        private readonly decimal Discount = 0.8m;
+
         public TripInfoModel(NextStopContext context, UserManager<ApplicationUser> userManager, ILogger<TripInfoModel> logger)
         {
             this.context = context;
@@ -24,16 +26,20 @@ namespace NextStop.Pages
         public Trip Trip;
         public DateTime DateOfTravel { get; set; }
         public int NumberOfPassengers { get; set; }
+        public int NumberOfDiscounts { get; set; }
         public decimal Total { get; set; }
         public bool OrderButtonActive { get; set; } = false;
 
-        public async Task<IActionResult> OnGetAsync(int? tripId, DateTime? date, int? numPassengers)
+        public async Task<IActionResult> OnGetAsync(int? tripId,
+                                                    DateTime? date,
+                                                    int? passengers,
+                                                    int? discounts)
         {
             var curUser = await _userManager.GetUserAsync(User);
             if (curUser == null) {
                 return RedirectToPage("/Account/Login", new {area = "Identity" });
             }
-            if (tripId.HasValue && date.HasValue && numPassengers.HasValue) {
+            if (tripId.HasValue && date.HasValue && passengers.HasValue && discounts.HasValue) {
                 
                 Trip = await context.Trips
                     .Include(t => t.Bus)
@@ -42,7 +48,12 @@ namespace NextStop.Pages
                 if (Trip == null)
                 {
                     TempData["ErrorMessage"] = "No trip was found.";
-                    _logger.LogError("TripInfo page Trip ID search returned on valid trip");
+                    _logger.LogError("TripInfo page, Trip ID search returned on valid trip");
+                    return RedirectToPage("/Index");
+                }
+                if (discounts > passengers)
+                {
+                    TempData["ErrorMessage"] = "The number of passengers must be equal to or greather than the number of discounts.";
                     return RedirectToPage("/Index");
                 }
 
@@ -58,17 +69,19 @@ namespace NextStop.Pages
                     .DefaultIfEmpty()
                     .Sum();
 
-                if ((capacity - numCurrentPassengers) > numPassengers)
+                if ((capacity - numCurrentPassengers) > passengers)
                 {
                     OrderButtonActive = true;
                 }
-                NumberOfPassengers = (int)numPassengers;
-                Total = Trip.Price * NumberOfPassengers;
+                NumberOfPassengers = (int)passengers;
+                NumberOfDiscounts = (int)discounts;
+                Total = (Trip.Price * (NumberOfPassengers - NumberOfDiscounts))
+                    + (Discount * Trip.Price * NumberOfDiscounts);
                 
                 return Page();
             }
             TempData["ErrorMessage"] = "An error occurred when loading the page";
-            _logger.LogError("TripInfo page 1 or more parameters was missing a value");
+            _logger.LogError("TripInfo page, 1 or more parameters was missing a value");
             return RedirectToPage("/Index");
         }
     }

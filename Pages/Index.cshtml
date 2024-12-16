@@ -11,6 +11,18 @@
         To search for trips relevant to your needs, please fill in the fields below.
     </div>
 }
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["ErrorMessage"]
+    </div>
+}
+@if (TempData["Confirmation"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Confirmation"]
+    </div>
+}
 
 <div class="row">
     <form class="col-12" method="get" asp-page="/Index">
@@ -35,6 +47,11 @@
                 <input name="passengers" type="number" asp-for="NewNumOfPassengers" class="form-control" />
                 <span asp-validation-for="NewNumOfPassengers"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="NewNumOfDiscounts" class="form-label"></label>
+                <input name="discounts" type="number" asp-for="NewNumOfDiscounts" class="form-control" />
+                <span asp-validation-for="NewNumOfDiscounts"></span>
+            </div>
             <button type="submit" class="btn btn-success">@(!Model.SearchWasRequested ? "Search for " : "Update ")Trips</button>
         </div>
     </form>
@@ -58,7 +75,8 @@
 
                         <a asp-page="/TripInfo" asp-route-tripId="@trip.Id"
                         asp-route-date="@Model.NewDateOfTravel.ToString("yyyy-MM-dd")"
-                        asp-route-numPassengers="@Model.NewNumOfPassengers"
+                        asp-route-passengers="@Model.NewNumOfPassengers"
+                        asp-route-discounts="@Model.NewNumOfDiscounts"
                         class="btn btn-primary">
                         View Trip Details
                         </a>

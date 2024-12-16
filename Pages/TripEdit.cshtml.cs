@@ -27,8 +27,8 @@ namespace NextStop.Pages
         [BindProperty, Required, Display(Name = "Bus")]
         public int NewBusId { get; set; }
 
-        // [BindProperty, Required, Display(Name = "Driver")]
-        // public ApplicationUser NewDriver { get; set; }
+        [BindProperty, Required, Display(Name = "Driver")]
+        public string NewDriverId { get; set; }
 
         [BindProperty, Required, Display(Name = "Origin")]
         public string NewOrigin { get; set; }
@@ -50,6 +50,8 @@ namespace NextStop.Pages
         public decimal NewPrice { get; set; }
 
         public List<SelectListItem> BusOptions { get; set; }
+
+        public List<SelectListItem> DriverOptions { get; set; }
 
         public async Task<IActionResult> OnGetAsync(int? tripId)
         {
@@ -76,8 +78,24 @@ namespace NextStop.Pages
                     Text = b.Model,
                     Selected = b.Id == Trip.BusId
                 }).ToListAsync();
+
+            DriverOptions = (await _userManager.GetUsersInRoleAsync("Driver"))
+                .Select(u => new SelectListItem
+                {
+                    Value = u.Id,
+                    Text = u.UserName,
+                })
+                .ToList();
+
+            DriverOptions.Insert(0, new SelectListItem 
+            { 
+                Value = "",
+                Text = "Select a Driver",
+                Selected = Trip.Driver == null
+            });
             
             NewBusId = Trip.BusId;
+            NewDriverId = Trip.Driver?.Id;
             NewOrigin = Trip.Origin;
             NewDestination = Trip.Destination;
             NewDepartureDay = Trip.DepartureDay;
@@ -107,7 +125,16 @@ namespace NextStop.Pages
                     _logger.LogError("TripEdit page, null Id value");
                     return RedirectToPage("/TripAdmin");
                 }
+
+                var driver = await _userManager.FindByIdAsync(NewDriverId);
+                if (driver == null)
+                {
+                    ModelState.AddModelError("NewDriverId", "Selected driver not found");
+                    return Page();
+                }
+
                 Trip.BusId = NewBusId;
+                Trip.Driver = driver;
                 Trip.Origin = NewOrigin;
                 Trip.Destination = NewDestination;
                 Trip.DepartureDay = NewDepartureDay;

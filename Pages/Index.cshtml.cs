@@ -36,6 +36,9 @@ public class IndexModel : PageModel
     [Display(Name= "Number of Passengers")]
     public int NewNumOfPassengers {get; set; }
 
+    [Display(Name= "Discounted passengers")]
+    public int NewNumOfDiscounts { get; set; }
+
     public DayOfWeek? NewDepartureDay {get; set; }
 
     public IList<Trip> Trips {get; set; } = new List<Trip>();
@@ -43,7 +46,8 @@ public class IndexModel : PageModel
     public async Task<IActionResult> OnGetAsync(string? origin,
                                                 string? destination,
                                                 DateTime? date,
-                                                int? passengers)
+                                                int? passengers,
+                                                int? discounts)
     {
         var curUser = await _userManager.GetUserAsync(User);
         if (curUser == null) {
@@ -70,7 +74,7 @@ public class IndexModel : PageModel
 
             if (date.HasValue)
             {
-                if (passengers <= 0)
+                if (passengers <= 0 || discounts < 0 || discounts > passengers)
                     {
                         ModelState.AddModelError("NewNumOfPassengers", "You must book for at least one passenger");
                         NewNumOfPassengers = 1;
@@ -108,12 +112,14 @@ public class IndexModel : PageModel
                                     
                         NewDateOfTravel = (DateTime)date;
                         NewNumOfPassengers = (int)passengers;
+                        NewNumOfDiscounts = (int)discounts;
                     }
                     else
                     {
                         ModelState.AddModelError("NewDateOfTravel", "Unable to search for past trips, please select a date starting from today.");
                         NewDateOfTravel = DateTime.Now.AddDays(1);
                         NewNumOfPassengers = (int)passengers;
+                        NewNumOfDiscounts = (int)discounts;
                         return Page();
                     }
                 }

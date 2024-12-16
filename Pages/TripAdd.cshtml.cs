@@ -25,8 +25,8 @@ namespace NextStop.Pages
         [BindProperty, Required, Display(Name = "Bus")]
         public int NewBusId { get; set; }
 
-        // [BindProperty, Required, Display(Name = "Driver")]
-        // public ApplicationUser NewDriver { get; set; }
+        [BindProperty, Required, Display(Name = "Driver")]
+        public string NewDriverId { get; set; }
 
         [BindProperty, Required, Display(Name = "Origin")]
         [StringLength(50, MinimumLength = 1, ErrorMessage = "An origin is required and may not exceed 50 characters.")]
@@ -53,6 +53,8 @@ namespace NextStop.Pages
 
         public List<SelectListItem> BusOptions { get; set; }
 
+        public List<SelectListItem> DriverOptions { get; set; }
+
         public async Task<IActionResult> OnGetAsync()
         {
             var curUser = await _userManager.GetUserAsync(User);
@@ -71,6 +73,14 @@ namespace NextStop.Pages
                     Text = b.Model
                 }).ToListAsync();
 
+            DriverOptions = (await _userManager.GetUsersInRoleAsync("Driver"))
+                .Select(u => new SelectListItem
+                {
+                    Value = u.Id,
+                    Text = u.UserName,
+                })
+                .ToList();
+
             return Page();
         }
         public async Task<IActionResult> OnPostAsync()
@@ -86,10 +96,17 @@ namespace NextStop.Pages
             }
             if (ModelState.IsValid)
             {
+                var driver = await _userManager.FindByIdAsync(NewDriverId);
+                if (driver == null)
+                {
+                    ModelState.AddModelError("NewDriverId", "Selected driver not found");
+                    return Page();
+                }
+
                 Trip newTrip = new Trip
                 {
                     BusId = NewBusId,
-                    Driver = null,
+                    Driver = driver,
                     Origin = NewOrigin,
                     Destination = NewDestination,
                     DepartureDay = NewDepartureDay,
