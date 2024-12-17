@@ -107,3 +107,23 @@
 3. Need assistance / figure things out
 - 
 *****
+
+2024/12/17 Amine
+1. Done since last scrum
+- Finish up the payment feature
+2. Plan until next Scrum
+- App hosting
+- Adapt Stripe payment to the hosted app
+3. Need assistance / figure things out
+- 
+
+2024/12/17 Sean
+1. Done since last scrum
+- Set up some drivers for our buses
+- Number of discounts
+2. Plan until next Scrum
+- App hosting
+- Azure Key vault
+3. Need assistance / figure things out
+- 
+*****
