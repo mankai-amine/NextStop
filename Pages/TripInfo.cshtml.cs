@@ -77,7 +77,7 @@ namespace NextStop.Pages
                     .DefaultIfEmpty()
                     .Sum();
 
-                if ((capacity - numCurrentPassengers) > passengers)
+                if ((capacity - numCurrentPassengers) >= passengers)
                 {
                     OrderButtonActive = true;
                 }
