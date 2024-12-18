@@ -4,7 +4,9 @@
     ViewData["Title"] = "My Orders";
 }
 
-<table class="table table-bordered table-striped">
+<h1 class="page-title page-title-shadow">My Orders</h1>
+
+<table class="table table-bordered table-striped text-center">
     <thead class="thead-dark">
         <tr>
             <th>Origin</th>
@@ -25,14 +27,12 @@
                     <td>@order.Trip.Origin</td>
                     <td>@order.Trip.Destination</td>
                     <td>@order.DateOfTravel.ToString("yyyy-MM-dd")</td>
-                    <td>@order.Trip.DepartureTime.ToString(@"hh\:mm")</td>
-                    <td>@order.Trip.ArrivalTime.ToString(@"hh\:mm")</td>
+                    <td>@order.Trip.DepartureTime.ToString("hh\\:mm")</td>
+                    <td>@order.Trip.ArrivalTime.ToString("hh\\:mm")</td>
                     <td>@order.NumOfPassengers</td>            
                     <td>
-                        @(
-                            (order.Trip.Price * (order.NumOfPassengers - order.NumOfDiscounts) 
-                            + (0.8m * order.Trip.Price * order.NumOfDiscounts)).ToString("F2")
-                        )
+                        @( (order.Trip.Price * (order.NumOfPassengers - order.NumOfDiscounts)
+                        + (0.8m * order.Trip.Price * order.NumOfDiscounts)).ToString("F2") )
                     </td>
 
 
