@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Search & Results page";
 }
-<h1>Trip search page</h1>
+<h1 class="mb-4">Trip search page</h1>
 
 @if (!Model.SearchWasRequested)
 {
@@ -94,3 +94,14 @@
         <p>No trips found matching your criteria.</p>
     }
 }
+
+
+@if (Request.Query["status"] == "success")
+{
+    <div class="alert alert-success">@Request.Query["message"]</div>
+}
+else if (Request.Query["status"] == "cancel")
+{
+    <div class="alert alert-danger">@Request.Query["message"]</div>
+}
+

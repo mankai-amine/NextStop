@@ -58,7 +58,7 @@ public class StripeService
                             Currency = "cad", 
                             ProductData = new SessionLineItemPriceDataProductDataOptions
                             {
-                                Name = $"Trip #{tripId}"
+                                Name = $"Total cost for your trip on {dateOfTravel:yyyy-MM-dd}"
                             },
                             UnitAmount = (long)(amount * 100) 
                         },
@@ -66,8 +66,8 @@ public class StripeService
                     }
                 },
                 Mode = "payment",
-                SuccessUrl = "http://localhost:5135/",
-                CancelUrl = "http://localhost:5135/",
+                SuccessUrl = "https://nextstop-baatfxcxefcahqdh.eastus2-01.azurewebsites.net/?status=success&message=Payment%20successful",
+                CancelUrl = "https://nextstop-baatfxcxefcahqdh.eastus2-01.azurewebsites.net/?status=cancel&message=Payment%20canceled",
                 Metadata = new Dictionary<string, string>
                 {
                     { "TripId", tripId.ToString() },
