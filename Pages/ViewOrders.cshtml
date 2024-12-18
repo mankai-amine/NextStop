@@ -25,13 +25,13 @@
                     <td>@order.Trip.Origin</td>
                     <td>@order.Trip.Destination</td>
                     <td>@order.DateOfTravel.ToString("yyyy-MM-dd")</td>
-                    <td>@order.Trip.DepartureTime</td>
-                    <td>@order.Trip.ArrivalTime</td>
+                    <td>@order.Trip.DepartureTime.ToString(@"hh\:mm")</td>
+                    <td>@order.Trip.ArrivalTime.ToString(@"hh\:mm")</td>
                     <td>@order.NumOfPassengers</td>            
                     <td>
                         @(
-                            order.Trip.Price * (order.NumOfPassengers - order.NumOfDiscounts) 
-                            + (0.8m * order.Trip.Price * order.NumOfDiscounts)
+                            (order.Trip.Price * (order.NumOfPassengers - order.NumOfDiscounts) 
+                            + (0.8m * order.Trip.Price * order.NumOfDiscounts)).ToString("F2")
                         )
                     </td>
 

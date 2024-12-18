@@ -21,10 +21,10 @@ public class AzureBlobService
         var blobServiceClient = new BlobServiceClient(_connectionString);
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         
-        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        var fileName = Guid.NewGuid().ToString() + ".jpg";
         var blobClient = containerClient.GetBlobClient(fileName);
         
-        await blobClient.UploadAsync(file.OpenReadStream(), true); 
+        await blobClient.UploadAsync(file.OpenReadStream(), overwrite: true); 
         
         return blobClient.Uri.AbsoluteUri; 
     }
