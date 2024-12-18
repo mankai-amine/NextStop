@@ -17,8 +17,7 @@
 </script>
 
 
-
-<h1>Trip Details</h1>
+<h1 class="page-title page-title-shadow">Details for your trip</h1>
 <div class="col-md-6 mb-3">
     <div class="card">
         <div class="card-body">
@@ -29,12 +28,12 @@
             <p class="card-text">Arrival Time: @Model.Trip.ArrivalTime.ToString(@"hh\:mm")</p>
             <p class="card-text">Number of Passengers: @Model.NumberOfPassengers</p>
             <p class="card-text">Number of Discounts: @Model.NumberOfDiscounts</p>
-            <p class="card-text">Total: $@Model.Total</p>
+            <p class="card-text">Total: $@Model.Total.ToString("F2")</p>
         </div>
     </div>
     @if (@Model.OrderButtonActive)
     {
-        <form method="post">
+        <form method="post" class="mt-3">
             <input type="hidden" name="amount" value="@Model.Total" />
             <input type="hidden" name="tripId" value="@Model.Trip.Id" />
             <input type="hidden" name="DateOfTravel" value="@Model.DateOfTravel" />

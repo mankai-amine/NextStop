@@ -20,6 +20,8 @@ namespace NextStop.Areas.Identity.Pages.Account.Manage
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly AzureBlobService _azureBlobService;
 
+        public string ProfileUrl { get; set; } = null;
+
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
@@ -73,7 +75,11 @@ namespace NextStop.Areas.Identity.Pages.Account.Manage
             var userName = await _userManager.GetUserNameAsync(user);
 
             Username = userName;
-
+            if (user.ProfilePic != null)
+            {
+                ProfileUrl = user.ProfilePic;
+            }
+            
             Input = new InputModel
             {
                 Name = user.Name

@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Search & Results page";
 }
-<h1 class="mb-4">Trip search page</h1>
+<h1 class="page-title page-title-underline">Find your dream trip!</h1>
 
 @if (!Model.SearchWasRequested)
 {
@@ -67,7 +67,7 @@
     <div class="row">
         @foreach (var trip in Model.Trips)
         {
-            <div class="col-md-4 mb-3">
+            <div class="col-md-4 mb-3 mt-3">
                 <div class="card">
                     <div class="card-body">
                         <h5 class="card-title">@trip.Origin to @trip.Destination</h5>
