@@ -95,20 +95,16 @@ namespace NextStop.Pages
 
 
 
-
-        // Handle Stripe payment session creation (on POST)
         public async Task<IActionResult> OnPostAsync(decimal amount, int tripId)
         {
-            // Get the current user
             var curUser = await _userManager.GetUserAsync(User);
-
             if (curUser == null)
             {
                 TempData["ErrorMessage"] = "User not authenticated.";
                 return RedirectToPage("/Account/Login", new { area = "Identity" });
             }
 
-            // Validate the trip ID
+            // Check if Trip exists
             var trip = await context.Trips.FindAsync(tripId);
             if (trip == null)
             {
@@ -116,7 +112,7 @@ namespace NextStop.Pages
                 return RedirectToPage("Error");
             }
 
-            // Create a Stripe Checkout session
+            // Call StripeService
             var sessionUrl = await _stripeService.CreateStripeCheckoutSessionAsync(
                 amount,
                 tripId,

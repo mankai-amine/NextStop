@@ -43,7 +43,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // Optionally create an admin user if it doesn't exist
+    // Create the first admin user 
     var adminEmail = "admin@nextstop.com";
     var adminUser = await userManager.FindByEmailAsync(adminEmail);
     if (adminUser == null)
