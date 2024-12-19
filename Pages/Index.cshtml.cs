@@ -131,7 +131,6 @@ public class IndexModel : PageModel
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    // _logger.Log(e);
                 }
             }
             else

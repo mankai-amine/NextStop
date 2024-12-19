@@ -8,26 +8,6 @@ public static class ModelBuilderExtensions
 {
     public static ModelBuilder Seed(this ModelBuilder modelBuilder)
     {
-        /*modelBuilder.Entity<IdentityRole>().HasData(
-        new IdentityRole 
-        { 
-            Id ="customer-role-id", 
-            Name = "Customer", 
-            NormalizedName = "CUSTOMER" 
-        },
-        new IdentityRole
-        {
-            Id = "driver-role-id",
-            Name = "Driver", 
-            NormalizedName = "DRIVER" 
-        },
-        new IdentityRole 
-        { 
-            Id = "admin-role-id", 
-            Name = "Admin", 
-            NormalizedName = "ADMIN" 
-        });*/
-
         modelBuilder.Entity<Bus>().HasData(
         new Bus
         {

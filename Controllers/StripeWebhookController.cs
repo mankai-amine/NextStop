@@ -42,8 +42,6 @@ public class StripeWebhookController : ControllerBase
                 throwOnApiVersionMismatch: false
             );
 
-            // Handle 'checkout.session.completed' event
-            //if (stripeEvent.Type == "checkout.session.completed")
             if (stripeEvent.Type == "checkout.session.completed" || stripeEvent.Type == "payment_intent.succeeded")
             {
                 var session = stripeEvent.Data.Object as Session;
@@ -56,7 +54,6 @@ public class StripeWebhookController : ControllerBase
                 var userId = session.Metadata["UserId"];
 
                 // Retrieve the user
-                //var user = await _userManager.GetUserAsync(User);
                 var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
                 {

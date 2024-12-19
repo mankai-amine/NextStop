@@ -31,11 +31,10 @@ public class StripeService
         {
             throw new InvalidOperationException("Stripe Secret Key is not configured.");
         }
-        // Set Stripe's secret key globally (for server-side API calls)
+        // Set Stripe's secret key
         StripeConfiguration.ApiKey = _secretKey;
     }
 
-    // Expose the publishable key if needed
     public string GetPublishableKey()
     {
         return _publishableKey;
