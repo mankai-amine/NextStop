@@ -11,23 +11,23 @@ Our technology stack for making this app consisted of: ASP.NET Core, Razor Pages
 # Functionalities
 •	Registration for users  
 •	Login/logout for users and admins  
-•	Users can search for trips
-•	Users can buy tickets
-•	Customers can view their orders
-•	Users can buy tickets
-•	Admins can add buses
-•	Admins can add and edit trips
+•	Users can search for trips 
+•	Users can buy tickets 
+•	Customers can view their orders 
+•	Users can buy tickets 
+•	Admins can add buses 
+•	Admins can add and edit trips 
 
 # How to Run
-- Clone the Repository
-- Restore Dependencies with the command: dotnet restore
-- Use Secrets Manager to configure sensitive data:
-  dotnet user-secrets init
-  dotnet user-secrets set "ConnectionStrings:AzureConnection" "your-database-connection-string"
-  dotnet user-secrets set "AzureBlobStorage:ConnectionString" "your-blob-storage-connection-string"
-  dotnet user-secrets set "AzureBlobStorage:ContainerName" "profilepictures"
-  dotnet user-secrets set "Stripe:PublishableKey" "your-stripe-publishable-key"
-  dotnet user-secrets set "Stripe:SecretKey" "your-stripe-secret-key"
-  dotnet user-secrets set "Stripe:WebhookSecret" "your-stripe-webhook-secret"
-- Run the app with the command: dotnet run
+- Clone the Repository 
+- Restore Dependencies with the command: dotnet restore 
+- Use Secrets Manager to configure sensitive data: 
+  dotnet user-secrets init 
+  dotnet user-secrets set "ConnectionStrings:AzureConnection" "your-database-connection-string" 
+  dotnet user-secrets set "AzureBlobStorage:ConnectionString" "your-blob-storage-connection-string" 
+  dotnet user-secrets set "AzureBlobStorage:ContainerName" "profilepictures" 
+  dotnet user-secrets set "Stripe:PublishableKey" "your-stripe-publishable-key" 
+  dotnet user-secrets set "Stripe:SecretKey" "your-stripe-secret-key" 
+  dotnet user-secrets set "Stripe:WebhookSecret" "your-stripe-webhook-secret" 
+- Run the app with the command: dotnet run 
 
