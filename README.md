@@ -60,7 +60,7 @@ Visit our application at [NextStop.xyz](https://nextstop-baatfxcxefcahqdh.eastus
 ## Database Schema
 The application uses the following models:
 
-- ApplicationUser
-- Bus
-- Order
-- Trip
+- ApplicationUser: The custom user class that extends the ASP.NET Core Identity IdentityUser class
+- Bus: Model for bus information (ID, model, manufacturer, capacity)
+- Order: Represents ticket bookings/purchases (includes trip, customer, passenger counts, travel date)
+- Trip: Contains journey details (origin, destination, times, price, bus, driver)
