@@ -57,3 +57,10 @@ Visit our application at [NextStop.xyz](https://nextstop-baatfxcxefcahqdh.eastus
    ```
    dotnet run
    ```
+## Database Schema
+The application uses the following models:
+
+- ApplicationUser
+- Bus
+- Order
+- Trip
